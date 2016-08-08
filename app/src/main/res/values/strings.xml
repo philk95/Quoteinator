@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Quoteinator</string>
+    <string name="open_drawer">Navigationsleiste öffnen</string>
+    <string name="close_drawer">Navigationsleiste schließen</string>
+    <string name="action_settings">Einstellungen</string>
+
+    <string-array name="titles">
+        <item>Start</item>
+        <item>Zitate</item>
+        <item>Dozenten</item>
+        <item>Module</item>
+    </string-array>
 </resources>

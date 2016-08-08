@@ -24,16 +24,16 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
     private static final String TABLE_QUOTE = "quote";
 
     // Docent Column
-    private static final String KEY_DOCENT_ID = "docent_id";
+    private static final String KEY_DOCENT_ID = "_id";
     private static final String KEY_FIRSTNAME = "firstname";
     private static final String KEY_LASTNMAE = "lastname";
 
     //Module Column
-    private static final String KEY_MODULE_ID = "module_id";
+    private static final String KEY_MODULE_ID = "_id";
     private static final String KEY_NAME = "name";
 
     //Qoute Colum
-    private static final String KEY_QUOTE_ID = "quote_id";
+    private static final String KEY_QUOTE_ID = "_id";
     private static final String KEY_DATE = "date";
     private static final String KEY_TEXT = "text";
 
@@ -52,7 +52,8 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
             + KEY_DATE + " DATETIME, " + KEY_TEXT + " TEXT, " + KEY_MODULE_ID + " INTEGER)";
 
     SqlDatabase(Context context) {
-        super(context, DB_NAME, null, DB_VERSION);
+        super(context, null, null, DB_VERSION);
+        //// TODO: 05.08.2016 DB ist momentan temporär. Namen hinzufügen um es zu ändern.
         Log.e("+++++++++++++", "SqlDatabase cstr");
     }
 
@@ -119,13 +120,13 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
         Cursor c = db.rawQuery(select, null);
 
         c.moveToFirst();
-        do{
+        do {
             int module_id = c.getInt(c.getColumnIndex(KEY_MODULE_ID));
             String name = c.getString(c.getColumnIndex(KEY_NAME));
             int docent_id = c.getInt(c.getColumnIndex(KEY_DOCENT_ID));
-            Module m = new Module(name,module_id,docent_id);
+            Module m = new Module(name, module_id, docent_id);
             modules.add(m);
-        }while(c.moveToNext());
+        } while (c.moveToNext());
 
         return modules;
     }
