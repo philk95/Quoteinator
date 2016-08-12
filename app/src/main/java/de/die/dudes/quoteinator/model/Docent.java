@@ -1,7 +1,6 @@
-package de.die.dudes.quoteinator;
+package de.die.dudes.quoteinator.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 public class Docent implements Serializable {
     /**
@@ -10,26 +9,35 @@ public class Docent implements Serializable {
     private static final long serialVersionUID = -1175120137889846720L;
     private int id;
     private String name;
-    private ArrayList<Module> modules = new ArrayList<>();
 
-    public Docent(String string) {
-        setName(string);
+    public Docent(int id, String name) {
+        setId(id);
+        setName(name);
+    }
+
+    public Docent(String name) {
+        setName(name);
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public int getId() {
+        return id;
+    }
+
+    private void setId(int id) {
+        this.id = id;
+    }
+
+    private void setName(String name) {
         this.name = name;
     }
 
-    public void addModule(Module module) {
-        modules.add(module);
-    }
-
-    public ArrayList<Module> getModules() {
-        return modules;
+    @Override
+    public String toString() {
+        return getName();
     }
 
     @Override
@@ -60,8 +68,4 @@ public class Docent implements Serializable {
         return true;
     }
 
-    @Override
-    public String toString() {
-        return getName();
-    }
 }

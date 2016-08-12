@@ -16,7 +16,13 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
+import de.die.dudes.quoteinator.database.SqlDatabase;
+import de.die.dudes.quoteinator.model.Docent;
+import de.die.dudes.quoteinator.model.Module;
+import de.die.dudes.quoteinator.model.Quotation;
 
 public class MainActivity extends Activity {
     private static final java.lang.String POSITION = "POSITION";
@@ -31,7 +37,35 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setUpInOnCreate(savedInstanceState);
+        testDB();
+    }
 
+    private void testDB() {
+        SqlDatabase db = new SqlDatabase(getApplicationContext());
+        for (int i = 0; i < 10; i++) {
+            db.addDocent(new Docent("Name" + i));
+        }
+
+        for (int i = 0; i < 5; i++) {
+            db.addModule(new Module("Modul" + i, db.getDocent(i + 1)));
+        }
+
+        for (int i = 0; i < 10; i++) {
+            Module module = db.getModule((i % 4) + 1);
+            Calendar date = GregorianCalendar.getInstance();
+            String text = "Quotation " + (i + 1);
+
+            db.addQuotation(new Quotation(module, date, text));
+        }
+
+        for(Quotation q : db.getQuotations()){
+            Log.e("DATABASE: ", q.toString());
+        }
+
+    }
+
+    private void setUpInOnCreate(Bundle savedInstanceState) {
         titles = getResources().getStringArray(R.array.titles);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -85,18 +119,6 @@ public class MainActivity extends Activity {
                 drawerList.setItemChecked(currentPosition, true);
             }
         });
-     /*   SqlDatabase db = new SqlDatabase(getApplicationContext());
-
-        Module m = new Module("Analysis I");
-         db.addModule(m);
-
-        ArrayList<Module> modules = db.getModules();
-
-        for (Module mod : modules){
-            Log.e("++++++++", mod.getName());
-            Log.e("++++++++", ""+mod.getDocent_id());
-            Log.e("++++++++", ""+mod.getModule_id());
-        }*/
     }
 
     @Override
