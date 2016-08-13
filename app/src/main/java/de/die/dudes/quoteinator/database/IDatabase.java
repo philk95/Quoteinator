@@ -1,5 +1,7 @@
 package de.die.dudes.quoteinator.database;
 
+import android.database.Cursor;
+
 import java.util.ArrayList;
 
 import de.die.dudes.quoteinator.model.Docent;
@@ -9,6 +11,8 @@ import de.die.dudes.quoteinator.model.Quotation;
 public interface IDatabase {
 
     public ArrayList<Docent> getDocents();
+
+    public Cursor getDocentsCursor();
 
     public Docent getDocent(int id);
 
@@ -20,6 +24,8 @@ public interface IDatabase {
 
     public ArrayList<Module> getModules();
 
+    public Cursor getModulesCursor();
+
     public Module getModule(int id);
 
     public boolean addModule(Module module);
@@ -29,6 +35,8 @@ public interface IDatabase {
     public boolean updateModule(int id, Module module);
 
     public ArrayList<Quotation> getQuotations();
+
+    public Cursor getQuotationsCursor();
 
     public Quotation getQuotation(int id);
 
@@ -40,6 +48,10 @@ public interface IDatabase {
 
     public ArrayList<Quotation> getQuotationsByModule(int id);
 
+    public Cursor getQuotationsCursorByModule(int id);
+
     public ArrayList<Quotation> getQuotationsByDocent(int id);
+
+    public Cursor getQuotationsCursorByDocent(int id);
 
 }

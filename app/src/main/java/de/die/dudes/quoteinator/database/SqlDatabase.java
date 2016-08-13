@@ -90,9 +90,8 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
     @Override
     public ArrayList<Docent> getDocents() {
         ArrayList<Docent> docents = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_DOCENT, new String[]{DOCENT_DOCENT_ID, DOCENT_LASTNMAE}, null, null, null, null, null);
+        Cursor cursor = getDocentsCursor();
 
         if (cursor.moveToFirst()) {
             do {
@@ -103,6 +102,13 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
         }
 
         return docents;
+    }
+
+    @Override
+    public Cursor getDocentsCursor() {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        return db.query(TABLE_DOCENT, new String[]{DOCENT_DOCENT_ID, DOCENT_LASTNMAE}, null, null, null, null, null);
     }
 
     @Override
@@ -156,9 +162,8 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
     @Override
     public ArrayList<Module> getModules() {
         ArrayList<Module> modules = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_MODULE, new String[]{MODULE_MODULE_ID, MODULE_NAME, MODULE_DOCENT_ID}, null, null, null, null, null);
+        Cursor cursor = getModulesCursor();
 
         if (cursor.moveToFirst()) {
             do {
@@ -170,6 +175,13 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
         }
 
         return modules;
+    }
+
+    @Override
+    public Cursor getModulesCursor() {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        return db.query(TABLE_MODULE, new String[]{MODULE_MODULE_ID, MODULE_NAME, MODULE_DOCENT_ID}, null, null, null, null, null);
     }
 
     @Override
@@ -226,9 +238,8 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
     @Override
     public ArrayList<Quotation> getQuotations() {
         ArrayList<Quotation> quotations = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_QUOTATION, new String[]{QUOTATION_QUOTATION_ID, QUOTATION_TEXT, QUOTATION_DATE, QUOTATION_MODULE_ID}, null, null, null, null, null);
+        Cursor cursor = getQuotationsCursor();
 
         if (cursor.moveToFirst()) {
             do {
@@ -241,6 +252,13 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
         }
 
         return quotations;
+    }
+
+    @Override
+    public Cursor getQuotationsCursor() {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        return db.query(TABLE_QUOTATION, new String[]{QUOTATION_QUOTATION_ID, QUOTATION_TEXT, QUOTATION_DATE, QUOTATION_MODULE_ID}, null, null, null, null, null);
     }
 
     @Override
@@ -300,9 +318,8 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
     @Override
     public ArrayList<Quotation> getQuotationsByModule(int id) {
         ArrayList<Quotation> quotations = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_QUOTATION, new String[]{QUOTATION_QUOTATION_ID, QUOTATION_TEXT, QUOTATION_DATE, QUOTATION_MODULE_ID}, QUOTATION_MODULE_ID + " = ? ", new String[]{Integer.toString(id)}, null, null, null);
+        Cursor cursor = getQuotationsCursorByModule(id);
 
         if (cursor.moveToFirst()) {
             do {
@@ -318,12 +335,17 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
     }
 
     @Override
-    public ArrayList<Quotation> getQuotationsByDocent(int id) {
-        ArrayList<Quotation> quotations = new ArrayList<>();
+    public Cursor getQuotationsCursorByModule(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String sql = "SELECT q._id, q.module_id, q.date, q.text FROM quotation as q INNER JOIN module ON q.module_id = module._id WHERE module.docent_id = ?";
-        Cursor cursor = db.rawQuery(sql, new String[]{Integer.toString(id)});
+        return db.query(TABLE_QUOTATION, new String[]{QUOTATION_QUOTATION_ID, QUOTATION_TEXT, QUOTATION_DATE, QUOTATION_MODULE_ID}, QUOTATION_MODULE_ID + " = ? ", new String[]{Integer.toString(id)}, null, null, null);
+    }
+
+    @Override
+    public ArrayList<Quotation> getQuotationsByDocent(int id) {
+        ArrayList<Quotation> quotations = new ArrayList<>();
+
+        Cursor cursor = getQuotationsCursorByDocent(id);
 
         if (cursor.moveToFirst()) {
             do {
@@ -336,6 +358,14 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
         }
 
         return quotations;
+    }
+
+    @Override
+    public Cursor getQuotationsCursorByDocent(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String sql = "SELECT q._id, q.module_id, q.date, q.text FROM quotation as q INNER JOIN module ON q.module_id = module._id WHERE module.docent_id = ?";
+        return db.rawQuery(sql, new String[]{Integer.toString(id)});
     }
 
 
