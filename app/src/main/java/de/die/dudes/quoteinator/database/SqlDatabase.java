@@ -29,20 +29,20 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
     private static final String TABLE_QUOTATION = "quotation";
 
     // Docent Column
-    private static final String DOCENT_DOCENT_ID = "_id";
+    public static final String DOCENT_DOCENT_ID = "_id";
     // private static final String DOCENT_FIRSTNAME = "firstname";
-    private static final String DOCENT_LASTNMAE = "lastname";
+    public static final String DOCENT_LASTNMAE = "lastname";
 
     // Module Column
-    private static final String MODULE_MODULE_ID = "_id";
-    private static final String MODULE_NAME = "name";
-    private static final String MODULE_DOCENT_ID = "docent_id";
+    public static final String MODULE_MODULE_ID = "_id";
+    public static final String MODULE_NAME = "name";
+    public static final String MODULE_DOCENT_ID = "docent_id";
 
     // Qoute Colum
-    private static final String QUOTATION_QUOTATION_ID = "_id";
-    private static final String QUOTATION_DATE = "date";
-    private static final String QUOTATION_TEXT = "text";
-    private static final String QUOTATION_MODULE_ID = "module_id";
+    public static final String QUOTATION_QUOTATION_ID = "_id";
+    public static final String QUOTATION_DATE = "date";
+    public static final String QUOTATION_TEXT = "text";
+    public static final String QUOTATION_MODULE_ID = "module_id";
 
     // Docent Table create
     private static final String CREATE_TABLE_DOCENT = String.format(
