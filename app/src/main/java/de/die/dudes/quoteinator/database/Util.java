@@ -11,14 +11,14 @@ import java.util.GregorianCalendar;
  */
 public class Util {
     public static String format(Calendar calendar) {
-        SimpleDateFormat fmt = new SimpleDateFormat("dd-MM-yyyy:HH:mm:ss");
+        SimpleDateFormat fmt = new SimpleDateFormat("dd.MM.yyyy:HH:mm:ss");
         fmt.setCalendar(calendar);
         String dateFormatted = fmt.format(calendar.getTime());
         return dateFormatted;
     }
 
     public static Calendar parse(String parse)  {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy:HH:mm:ss");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy:HH:mm:ss");
         Date date;
         try {
             date = formatter.parse(parse);
