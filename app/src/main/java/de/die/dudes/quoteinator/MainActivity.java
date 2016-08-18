@@ -38,32 +38,9 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setUpInOnCreate(savedInstanceState);
-        testDB();
     }
 
-    private void testDB() {
-        SqlDatabase db = new SqlDatabase(getApplicationContext());
-        for (int i = 0; i < 10; i++) {
-            db.addDocent(new Docent("Name" + i));
-        }
 
-        for (int i = 0; i < 5; i++) {
-            db.addModule(new Module("Modul" + i, db.getDocent(i + 1)));
-        }
-
-        for (int i = 0; i < 10; i++) {
-            Module module = db.getModule((i % 4) + 1);
-            Calendar date = GregorianCalendar.getInstance();
-            String text = "Quotation " + (i + 1);
-
-            db.addQuotation(new Quotation(module, date, text));
-        }
-
-        for(Quotation q : db.getQuotations()){
-            Log.e("DATABASE: ", q.toString());
-        }
-
-    }
 
     private void setUpInOnCreate(Bundle savedInstanceState) {
         titles = getResources().getStringArray(R.array.titles);

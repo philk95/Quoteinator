@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Modules>
+    <Module>
+        <Name>Lineare Algebra I</Name>
+        <Docent>Grajewski</Docent>
+    </Module>
+    <Module>
+        <Name>Analysis I</Name>
+        <Docent>Hollstein</Docent>
+    </Module>
+    <Module>
+        <Name>IT-Grundlagen</Name>
+        <Docent>Bongen</Docent>
+    </Module>
+    <Module>
+        <Name>Programmieren mit Java</Name>
+        <Docent>Poniatowski</Docent>
+    </Module>
+    <Module>
+        <Name>Lineare Algebra II</Name>
+        <Docent>Grajewski</Docent>
+    </Module>
+    <Module>
+        <Name>Analysis II</Name>
+        <Docent>Hollstein</Docent>
+    </Module>
+    <Module>
+        <Name>Algorithmen und Datenstrukturen</Name>
+        <Docent>Striegnitz</Docent>
+    </Module>
+    <Module>
+        <Name>Mathematik Grundlagen</Name>
+        <Docent>Merkel</Docent>
+    </Module>
+</Modules>

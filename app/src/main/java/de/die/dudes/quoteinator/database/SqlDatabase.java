@@ -7,9 +7,16 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import de.die.dudes.quoteinator.database.migration.ConsumeData;
+import de.die.dudes.quoteinator.database.migration.ModuleXML;
+import de.die.dudes.quoteinator.database.migration.QuotationXML;
+import de.die.dudes.quoteinator.database.migration.XMLParsing;
 import de.die.dudes.quoteinator.model.Docent;
 import de.die.dudes.quoteinator.model.Module;
 import de.die.dudes.quoteinator.model.Quotation;
@@ -19,9 +26,10 @@ import de.die.dudes.quoteinator.model.Quotation;
  */
 public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
 
+    private Context context;
+    private SQLiteDatabase db;
     private static final String DB_NAME = "quotesDB";
     private static final int DB_VERSION = 1;
-
 
     // Table names
     private static final String TABLE_DOCENT = "docent";
@@ -67,19 +75,59 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
     public SqlDatabase(Context context) {
         super(context, null, null, DB_VERSION);
         //// TODO: 05.08.2016 DB ist momentan temporär. Namen hinzufügen um es zu ändern.
+        this.context = context;
+        this.db = getWritableDatabase();
         Log.e("+++++++++++++", "SqlDatabase cstr");
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.e("++++++++++++", "onCreate");
+        this.db = db;
         updateMyDatabase(db, 0, DB_VERSION);
     }
 
     private void updateMyDatabase(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL(CREATE_TABLE_DOCENT);
-        db.execSQL(CREATE_TABLE_MODULE);
-        db.execSQL(CREATE_TABLE_QUOTATION);
+
+        if (oldVersion == 0) {
+            db.execSQL(CREATE_TABLE_DOCENT);
+            db.execSQL(CREATE_TABLE_MODULE);
+            db.execSQL(CREATE_TABLE_QUOTATION);
+
+            XMLParsing xmlParsing = new XMLParsing(context);
+            try {
+                xmlParsing.run(new ConsumeData() {
+                    @Override
+                    public void consumeDocents(ArrayList<String> docents) {
+                        for (String docent : docents) {
+                            addDocent(new Docent(docent));
+                        }
+                    }
+
+                    @Override
+                    public void consumeModules(ArrayList<ModuleXML> modules) {
+                        for (ModuleXML module : modules) {
+                            String name = module.name;
+                            Docent docent = getDocent(module.docent);
+                            addModule(new Module(name, docent));
+                        }
+                    }
+
+                    @Override
+                    public void consumeQuotations(ArrayList<QuotationXML> quoations) {
+                        for (QuotationXML quote : quoations) {
+                            String text = quote.text;
+                            String date = quote.date + ":09:00:00";
+                            Module module = getModule(quote.module);
+
+                            addQuotation(new Quotation(module, Util.parse(date), text));
+                        }
+                    }
+                });
+            } catch (XmlPullParserException | IOException e) {
+                Log.e("+++++", e.getMessage());
+            }
+        }
     }
 
     @Override
@@ -106,16 +154,12 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
 
     @Override
     public Cursor getDocentsCursor() {
-        SQLiteDatabase db = this.getReadableDatabase();
-
         return db.query(TABLE_DOCENT, new String[]{DOCENT_DOCENT_ID, DOCENT_LASTNMAE}, null, null, null, null, null);
     }
 
     @Override
     public Docent getDocent(int id) {
         Docent docent = null;
-        SQLiteDatabase db = this.getReadableDatabase();
-
         Cursor cursor = db.query(TABLE_DOCENT, new String[]{DOCENT_DOCENT_ID, DOCENT_LASTNMAE}, DOCENT_DOCENT_ID + " =  ?", new String[]{Integer.toString(id)}, null, null, null);
 
         if (cursor.moveToFirst()) {
@@ -127,10 +171,21 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
         return docent;
     }
 
+    private Docent getDocent(String name) {
+        Docent docent = null;
+        Cursor cursor = db.query(TABLE_DOCENT, new String[]{DOCENT_DOCENT_ID, DOCENT_LASTNMAE}, DOCENT_LASTNMAE + " =  ?", new String[]{name}, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            int id = cursor.getInt(0);
+            String lastname = cursor.getString(1);
+            docent = new Docent(id, lastname);
+        }
+
+        return docent;
+    }
+
     @Override
     public boolean addDocent(Docent docent) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
         ContentValues docentValues = new ContentValues();
         docentValues.put(DOCENT_LASTNMAE, docent.getName());
 
@@ -141,8 +196,6 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
 
     @Override
     public boolean removeDocent(int id) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
         int affectedRows = db.delete(TABLE_DOCENT, DOCENT_DOCENT_ID + " = ?", new String[]{Integer.toString(id)});
 
         return affectedRows > 0;
@@ -150,8 +203,6 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
 
     @Override
     public boolean updateDocent(int id, Docent docent) {
-        SQLiteDatabase db = this.getReadableDatabase();
-
         ContentValues docentValues = new ContentValues();
         docentValues.put(DOCENT_LASTNMAE, docent.getName());
 
@@ -179,16 +230,12 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
 
     @Override
     public Cursor getModulesCursor() {
-        SQLiteDatabase db = this.getReadableDatabase();
-
         return db.query(TABLE_MODULE, new String[]{MODULE_MODULE_ID, MODULE_NAME, MODULE_DOCENT_ID}, null, null, null, null, null);
     }
 
     @Override
     public Module getModule(int id) {
         Module module = null;
-        SQLiteDatabase db = this.getReadableDatabase();
-
         Cursor cursor = db.query(TABLE_MODULE, new String[]{MODULE_MODULE_ID, MODULE_NAME, MODULE_DOCENT_ID}, MODULE_MODULE_ID + " =  ?", new String[]{Integer.toString(id)}, null, null, null);
 
         if (cursor.moveToFirst()) {
@@ -201,10 +248,22 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
         return module;
     }
 
+    private Module getModule(String moduleName) {
+        Module module = null;
+        Cursor cursor = db.query(TABLE_MODULE, new String[]{MODULE_MODULE_ID, MODULE_NAME, MODULE_DOCENT_ID}, MODULE_NAME + " =  ?", new String[]{moduleName}, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            int id = cursor.getInt(0);
+            String name = cursor.getString(1);
+            Docent docent = getDocent(cursor.getInt(2));
+            module = new Module(id, name, docent);
+        }
+
+        return module;
+    }
+
     @Override
     public boolean addModule(Module module) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
         ContentValues moduleValues = new ContentValues();
         moduleValues.put(MODULE_DOCENT_ID, module.getDocent().getId());
         moduleValues.put(MODULE_NAME, module.getName());
@@ -216,8 +275,6 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
 
     @Override
     public boolean removeModule(int id) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
         int affectedRows = db.delete(TABLE_MODULE, MODULE_MODULE_ID + " = ?", new String[]{Integer.toString(id)});
 
         return affectedRows > 0;
@@ -225,8 +282,6 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
 
     @Override
     public boolean updateModule(int id, Module module) {
-        SQLiteDatabase db = this.getReadableDatabase();
-
         ContentValues moduleValues = new ContentValues();
         moduleValues.put(MODULE_DOCENT_ID, module.getDocent().getId());
         moduleValues.put(MODULE_NAME, module.getName());
@@ -256,16 +311,12 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
 
     @Override
     public Cursor getQuotationsCursor() {
-        SQLiteDatabase db = this.getReadableDatabase();
-
         return db.query(TABLE_QUOTATION, new String[]{QUOTATION_QUOTATION_ID, QUOTATION_TEXT, QUOTATION_DATE, QUOTATION_MODULE_ID}, null, null, null, null, null);
     }
 
     @Override
     public Quotation getQuotation(int id) {
         Quotation quotation = null;
-        SQLiteDatabase db = this.getReadableDatabase();
-
         Cursor cursor = db.query(TABLE_QUOTATION, new String[]{QUOTATION_QUOTATION_ID, QUOTATION_TEXT, QUOTATION_DATE, QUOTATION_MODULE_ID}, QUOTATION_QUOTATION_ID + " =  ?", new String[]{Integer.toString(id)}, null, null, null);
 
         if (cursor.moveToFirst()) {
@@ -281,8 +332,6 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
 
     @Override
     public boolean addQuotation(Quotation quote) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
         ContentValues quotationValues = new ContentValues();
         quotationValues.put(QUOTATION_MODULE_ID, quote.getModul().getID());
         quotationValues.put(QUOTATION_TEXT, quote.getText());
@@ -295,8 +344,6 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
 
     @Override
     public boolean removeQuotation(int id) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
         int affectedRows = db.delete(TABLE_QUOTATION, QUOTATION_QUOTATION_ID + " = ?", new String[]{Integer.toString(id)});
 
         return affectedRows > 0;
@@ -304,7 +351,6 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
 
     @Override
     public boolean updateQuotation(int id, Quotation quote) {
-        SQLiteDatabase db = this.getReadableDatabase();
 
         ContentValues quotationValues = new ContentValues();
         quotationValues.put(QUOTATION_MODULE_ID, quote.getModul().getID());
@@ -336,8 +382,6 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
 
     @Override
     public Cursor getQuotationsCursorByModule(int id) {
-        SQLiteDatabase db = this.getReadableDatabase();
-
         return db.query(TABLE_QUOTATION, new String[]{QUOTATION_QUOTATION_ID, QUOTATION_TEXT, QUOTATION_DATE, QUOTATION_MODULE_ID}, QUOTATION_MODULE_ID + " = ? ", new String[]{Integer.toString(id)}, null, null, null);
     }
 
@@ -362,8 +406,6 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
 
     @Override
     public Cursor getQuotationsCursorByDocent(int id) {
-        SQLiteDatabase db = this.getReadableDatabase();
-
         String sql = "SELECT q._id, q.module_id, q.date, q.text FROM quotation as q INNER JOIN module ON q.module_id = module._id WHERE module.docent_id = ?";
         return db.rawQuery(sql, new String[]{Integer.toString(id)});
     }
