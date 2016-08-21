@@ -1,17 +1,15 @@
-package de.die.dudes.quoteinator.model;
+package de.die.dudes.quoteinator.dataadapter;
 
 import android.database.Cursor;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 import de.die.dudes.quoteinator.R;
-import de.die.dudes.quoteinator.database.SqlDatabase;
 
 /**
  * Created by Phil on 19.08.2016.
@@ -31,25 +29,28 @@ public class QuotationAdapter extends RecyclerViewCursorAdapter<QuotationAdapter
     }
 
     @Override
-    protected void onBindViewHolder(QuotationAdapter.ViewHolder holder, Cursor cursor) {
+    protected View onBindViewHolder(QuotationAdapter.ViewHolder holder, Cursor cursor) {
         String text = cursor.getString(1);
-        String date = cursor.getString(2);
-        String module = "Modul";
+        String date = cursor.getString(2).substring(0,10);
+        String module = cursor.getString(3);
 
         holder.setText(text);
         holder.setDate(date);
         holder.setModule(module);
+
+        return holder.getView();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
+        private CardView cv;
         private TextView text;
         private TextView date;
         private TextView module;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            CardView cv = (CardView) itemView.findViewById(R.id.card_view_quotation);
+            cv = (CardView) itemView.findViewById(R.id.card_view_quotation);
             text = (TextView) cv.findViewById(R.id.cv_text);
             date = (TextView) cv.findViewById(R.id.cv_date);
             module = (TextView) cv.findViewById(R.id.cv_module);
@@ -66,6 +67,10 @@ public class QuotationAdapter extends RecyclerViewCursorAdapter<QuotationAdapter
 
         public void setModule(String module) {
             this.module.setText(module);
+        }
+
+        public View getView() {
+            return cv;
         }
     }
 }

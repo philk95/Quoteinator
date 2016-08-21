@@ -10,7 +10,7 @@ import de.die.dudes.quoteinator.model.Quotation;
 
 public interface IDatabase {
 
-    public ArrayList<Docent> getDocents();
+    //public ArrayList<Docent> getDocents();
 
     public Cursor getDocentsCursor();
 
@@ -22,7 +22,7 @@ public interface IDatabase {
 
     public boolean updateDocent(int id, Docent docent);
 
-    public ArrayList<Module> getModules();
+   // public ArrayList<Module> getModules();
 
     public Cursor getModulesCursor();
 
@@ -34,7 +34,7 @@ public interface IDatabase {
 
     public boolean updateModule(int id, Module module);
 
-    public ArrayList<Quotation> getQuotations();
+    //public ArrayList<Quotation> getQuotations();
 
     public Cursor getQuotationsCursor();
 
@@ -46,11 +46,11 @@ public interface IDatabase {
 
     public boolean updateQuotation(int id, Quotation quote);
 
-    public ArrayList<Quotation> getQuotationsByModule(int id);
+   // public ArrayList<Quotation> getQuotationsByModule(int id);
 
     public Cursor getQuotationsCursorByModule(int id);
 
-    public ArrayList<Quotation> getQuotationsByDocent(int id);
+   // public ArrayList<Quotation> getQuotationsByDocent(int id);
 
     public Cursor getQuotationsCursorByDocent(int id);
 

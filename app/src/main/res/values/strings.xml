@@ -10,4 +10,8 @@
         <item>Dozenten</item>
         <item>Module</item>
     </string-array>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="modules">Module</string>
+    <string name="quotations">Zitate</string>
+    <string name="docents">Dozenten</string>
 </resources>

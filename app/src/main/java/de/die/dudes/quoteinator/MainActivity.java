@@ -8,7 +8,6 @@ import android.content.res.Configuration;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,13 +15,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-
-import de.die.dudes.quoteinator.database.SqlDatabase;
-import de.die.dudes.quoteinator.model.Docent;
-import de.die.dudes.quoteinator.model.Module;
-import de.die.dudes.quoteinator.model.Quotation;
+import de.die.dudes.quoteinator.fragments.DocentFragment;
+import de.die.dudes.quoteinator.fragments.ModuleFragment;
+import de.die.dudes.quoteinator.fragments.QuotationFragment;
+import de.die.dudes.quoteinator.fragments.TopFragment;
 
 public class MainActivity extends Activity {
     private static final java.lang.String POSITION = "POSITION";
@@ -36,7 +32,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main_drawerlayout);
         setUpInOnCreate(savedInstanceState);
     }
 
