@@ -23,13 +23,13 @@ public class Docent implements Serializable {
         return name;
     }
 
-    public int getId() {
-        return id;
-    }
+      public int getId() {
+           return id;
+       }
 
-    private void setId(int id) {
-        this.id = id;
-    }
+       private void setId(int id) {
+           this.id = id;
+       }
 
     private void setName(String name) {
         this.name = name;
@@ -44,7 +44,7 @@ public class Docent implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + id;
+       result = prime * result + id;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         return result;
     }
@@ -58,8 +58,8 @@ public class Docent implements Serializable {
         if (getClass() != obj.getClass())
             return false;
         Docent other = (Docent) obj;
-        if (id != other.id)
-            return false;
+       if (id != other.id)
+           return false;
         if (name == null) {
             if (other.name != null)
                 return false;

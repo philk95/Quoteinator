@@ -29,9 +29,11 @@ public class ModuleAdapter extends RecyclerViewCursorAdapter<ModuleAdapter.ViewH
 
     @Override
     protected View onBindViewHolder(ModuleAdapter.ViewHolder holder, Cursor cursor) {
-        String name = cursor.getString(1);
+        String moduleName = cursor.getString(1);
+        String docentName = cursor.getString(2);
 
-        holder.setName(name);
+        holder.setModuleName(moduleName);
+        holder.setDocentName(docentName);
 
         return holder.getView();
     }
@@ -39,21 +41,27 @@ public class ModuleAdapter extends RecyclerViewCursorAdapter<ModuleAdapter.ViewH
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         private CardView cv;
-        private TextView name;
+        private TextView moduleName;
+        private TextView docentName;
 
         public ViewHolder(View itemView) {
             super(itemView);
             cv = (CardView) itemView.findViewById(R.id.card_view_module);
-            name = (TextView) cv.findViewById(R.id.cv_module_name);
+            moduleName = (TextView) cv.findViewById(R.id.cv_module_name);
+            docentName = (TextView) cv.findViewById(R.id.cv_module_docent_name);
         }
 
 
-        public void setName(String name) {
-            this.name.setText(name);
+        public void setModuleName(String name) {
+            this.moduleName.setText(name);
         }
 
         public View getView() {
             return cv;
+        }
+
+        public void setDocentName(String docentName) {
+            this.docentName.setText(docentName);
         }
     }
 }

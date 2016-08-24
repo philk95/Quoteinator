@@ -3,6 +3,7 @@ package de.die.dudes.quoteinator.database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -73,10 +74,15 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
 
 
     public SqlDatabase(Context context) {
-        super(context, null, null, DB_VERSION);
-        //// TODO: 05.08.2016 DB ist momentan temporär. Namen hinzufügen um es zu ändern.
+        super(context, DB_NAME, null, DB_VERSION);
+        // super(context, DB_NAME, null, DB_VERSION);
         this.context = context;
         this.db = getWritableDatabase();
+    }
+
+    @Override
+    public void onConfigure(SQLiteDatabase db) {
+        db.setForeignKeyConstraintsEnabled(true);
     }
 
     @Override
@@ -133,7 +139,7 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
         updateMyDatabase(db, oldVersion, newVersion);
     }
 
-    /*@Override
+   /* @Override
     public ArrayList<Docent> getDocents() {
         ArrayList<Docent> docents = new ArrayList<>();
 
@@ -194,8 +200,12 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
 
     @Override
     public boolean removeDocent(int id) {
-        int affectedRows = db.delete(TABLE_DOCENT, DOCENT_DOCENT_ID + " = ?", new String[]{Integer.toString(id)});
-
+        int affectedRows = 0;
+        try {
+            affectedRows = db.delete(TABLE_DOCENT, DOCENT_DOCENT_ID + " = ?", new String[]{Integer.toString(id)});
+        } catch (SQLiteConstraintException e) {
+            throw e;
+        }
         return affectedRows > 0;
     }
 
@@ -228,7 +238,9 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
   */
     @Override
     public Cursor getModulesCursor() {
-        return db.query(TABLE_MODULE, new String[]{MODULE_MODULE_ID, MODULE_NAME, MODULE_DOCENT_ID}, null, null, null, null, null);
+        String sql = String.format("SELECT m.%s, m.%s, d.%s FROM %s m INNER JOIN %s d on m.%s = d.%s", MODULE_MODULE_ID, MODULE_NAME, DOCENT_LASTNMAE, TABLE_MODULE, TABLE_DOCENT, MODULE_DOCENT_ID, DOCENT_DOCENT_ID);
+        return db.rawQuery(sql, new String[]{});
+        //return db.query(TABLE_MODULE, new String[]{MODULE_MODULE_ID, MODULE_NAME, MODULE_DOCENT_ID}, null, null, null, null, null);
     }
 
     @Override
@@ -246,7 +258,7 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
         return module;
     }
 
-    private Module getModule(String moduleName) {
+    public Module getModule(String moduleName) {
         Module module = null;
         Cursor cursor = db.query(TABLE_MODULE, new String[]{MODULE_MODULE_ID, MODULE_NAME, MODULE_DOCENT_ID}, MODULE_NAME + " =  ?", new String[]{moduleName}, null, null, null);
 
@@ -263,7 +275,11 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
     @Override
     public boolean addModule(Module module) {
         ContentValues moduleValues = new ContentValues();
-        moduleValues.put(MODULE_DOCENT_ID, module.getDocent().getId());
+        Docent docent = getDocent(module.getDocent().getName());
+        if (docent == null) {
+            Log.e(getClass().getName(), "Docent not find with name: " + module.getDocent().getName());
+        }
+        moduleValues.put(MODULE_DOCENT_ID, docent.getId());
         moduleValues.put(MODULE_NAME, module.getName());
 
         long newID = db.insert(TABLE_MODULE, null, moduleValues);
@@ -273,8 +289,13 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
 
     @Override
     public boolean removeModule(int id) {
-        int affectedRows = db.delete(TABLE_MODULE, MODULE_MODULE_ID + " = ?", new String[]{Integer.toString(id)});
+        int affectedRows = 0;
 
+        try {
+            affectedRows = db.delete(TABLE_MODULE, MODULE_MODULE_ID + " = ?", new String[]{Integer.toString(id)});
+        } catch (SQLiteConstraintException e) {
+            throw e;
+        }
         return affectedRows > 0;
     }
 
@@ -344,8 +365,12 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
 
     @Override
     public boolean removeQuotation(int id) {
-        int affectedRows = db.delete(TABLE_QUOTATION, QUOTATION_QUOTATION_ID + " = ?", new String[]{Integer.toString(id)});
-
+        int affectedRows = 0;
+        try {
+            affectedRows = db.delete(TABLE_QUOTATION, QUOTATION_QUOTATION_ID + " = ?", new String[]{Integer.toString(id)});
+        } catch (SQLiteConstraintException e) {
+            throw e;
+        }
         return affectedRows > 0;
     }
 

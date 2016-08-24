@@ -18,6 +18,7 @@ public abstract class RecyclerViewCursorAdapter<VH extends RecyclerView.ViewHold
     private boolean mDataValid;
     private int mRowIDColumn;
     private ClickListener listener;
+    private LongClickListener longClickListener;
 
 
     public RecyclerViewCursorAdapter(Cursor cursor) {
@@ -45,6 +46,17 @@ public abstract class RecyclerViewCursorAdapter<VH extends RecyclerView.ViewHold
                 if (listener != null) {
                     listener.onClick(id);
                 }
+            }
+        });
+        view.setLongClickable(true);
+        view.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (longClickListener != null) {
+                    longClickListener.onClick(id);
+                }
+
+                return true;
             }
         });
 
@@ -124,7 +136,15 @@ public abstract class RecyclerViewCursorAdapter<VH extends RecyclerView.ViewHold
         this.listener = listener;
     }
 
+    public void setLongClickListener(LongClickListener longClickListener) {
+        this.longClickListener = longClickListener;
+    }
+
     public interface ClickListener {
+        void onClick(int id);
+    }
+
+    public interface LongClickListener {
         void onClick(int id);
     }
 }

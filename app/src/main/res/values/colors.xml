@@ -4,5 +4,9 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="colorWhite">#FFFFFF</color>
-
+    <color name="colorBlack">#000000</color>
+    <color name="red">@android:color/holo_red_dark</color>
+    <color name="quotationTextColor">@color/colorBlack</color>
+    <color name="floatingButtons">@android:color/holo_orange_light</color>
+    <color name="actionBar">@android:color/holo_orange_light</color>
 </resources>

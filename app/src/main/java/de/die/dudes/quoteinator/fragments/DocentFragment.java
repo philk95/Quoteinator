@@ -2,37 +2,50 @@ package de.die.dudes.quoteinator.fragments;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import de.die.dudes.quoteinator.R;
+import de.die.dudes.quoteinator.createactivities.CreateDocentActivity;
 import de.die.dudes.quoteinator.dataadapter.DocentAdapter;
 import de.die.dudes.quoteinator.dataadapter.RecyclerViewCursorAdapter;
 import de.die.dudes.quoteinator.database.SqlDatabase;
+import de.die.dudes.quoteinator.dialog.DeleteDialog;
 
 /**
  * Created by Phil on 05.08.2016.
  */
-public class DocentFragment extends Fragment {
+public class DocentFragment extends Fragment implements DeleteDialog.DeleteDialogListener {
+
+    public static final String ID_KEY = "ID_KEY";
+    private SqlDatabase db;
+    private DocentAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        RecyclerView recyclerView = (RecyclerView) inflater.inflate(R.layout.fragment_docent, container, false);
+        CoordinatorLayout coordinatorLayout = (CoordinatorLayout) inflater.inflate(R.layout.fragment_docent, container, false);
+        RecyclerView recyclerView = (RecyclerView) coordinatorLayout.findViewById(R.id.docent_recycler);
 
-        SqlDatabase db = new SqlDatabase(getContext());
-
-        DocentAdapter adapter = new DocentAdapter(db.getDocentsCursor());
+        adapter = new DocentAdapter(getCursor());
 
         adapter.setListener(new RecyclerViewCursorAdapter.ClickListener() {
             @Override
             public void onClick(int id) {
                 Fragment fragment = new QuotationFragment();
-               Bundle bundle = new Bundle();
+                Bundle bundle = new Bundle();
                 bundle.putInt(QuotationFragment.DOCENT, id);
                 fragment.setArguments(bundle);
 
@@ -43,10 +56,64 @@ public class DocentFragment extends Fragment {
             }
         });
 
+        adapter.setLongClickListener(new RecyclerViewCursorAdapter.LongClickListener() {
+            @Override
+            public void onClick(int id) {
+                DeleteDialog deleteDialog = new DeleteDialog();
+                Bundle bundle = new Bundle();
+                bundle.putInt(ID_KEY, id);
+                deleteDialog.setArguments(bundle);
+                deleteDialog.setTargetFragment(DocentFragment.this, 0);
+                deleteDialog.show(getFragmentManager(), "delete");
+            }
+        });
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
 
-        return recyclerView;
+        FloatingActionButton fab = (FloatingActionButton) coordinatorLayout.findViewById(R.id.addDocent);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), CreateDocentActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        return coordinatorLayout;
+    }
+
+    private Cursor getCursor() {
+        db = new SqlDatabase(getContext());
+        return db.getDocentsCursor();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        adapter.swapCursor(getCursor());
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        db.close();
+    }
+
+    @Override
+    public void onPositiveClick(Bundle bundle) {
+        try {
+            db.removeDocent(bundle.getInt(ID_KEY));
+            adapter.changeCursor(getCursor());
+        } catch (SQLiteConstraintException e) {
+            Toast.makeText(getContext(), getString(R.string.cannotDeleteDocent), Toast.LENGTH_LONG).show();
+        }
+
+    }
+
+    @Override
+    public void onNegativeClick() {
+
     }
 }

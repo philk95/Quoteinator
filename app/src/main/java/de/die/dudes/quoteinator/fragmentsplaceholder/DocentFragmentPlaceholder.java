@@ -3,16 +3,11 @@ package de.die.dudes.quoteinator.fragmentsplaceholder;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import de.die.dudes.quoteinator.R;
-import de.die.dudes.quoteinator.dataadapter.DocentAdapter;
-import de.die.dudes.quoteinator.dataadapter.RecyclerViewCursorAdapter;
-import de.die.dudes.quoteinator.database.SqlDatabase;
 import de.die.dudes.quoteinator.fragments.DocentFragment;
 
 /**

@@ -2,19 +2,15 @@ package de.die.dudes.quoteinator;
 
 
 import android.app.Activity;
-import android.app.ActionBar;
-import android.app.FragmentTransaction;
-
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class MainActivityTabbed extends Activity implements ViewPager.OnPageChangeListener {
+public class MainActivityTabbed extends AppCompatActivity implements ViewPager.OnPageChangeListener {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -44,6 +40,7 @@ public class MainActivityTabbed extends Activity implements ViewPager.OnPageChan
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
+        getSupportActionBar().show();
     }
 
 

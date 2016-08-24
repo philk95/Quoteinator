@@ -47,7 +47,6 @@ public class DocentAdapter extends RecyclerViewCursorAdapter<DocentAdapter.ViewH
             name = (TextView) cv.findViewById(R.id.cv_docent_name);
         }
 
-
         public void setName(String name) {
             this.name.setText(name);
         }
