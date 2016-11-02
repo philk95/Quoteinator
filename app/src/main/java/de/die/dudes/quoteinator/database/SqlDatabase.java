@@ -89,6 +89,7 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
     public void onCreate(SQLiteDatabase db) {
         this.db = db;
         updateMyDatabase(db, 0, DB_VERSION);
+
     }
 
     private void updateMyDatabase(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -238,7 +239,7 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
   */
     @Override
     public Cursor getModulesCursor() {
-        String sql = String.format("SELECT m.%s, m.%s, d.%s FROM %s m INNER JOIN %s d on m.%s = d.%s", MODULE_MODULE_ID, MODULE_NAME, DOCENT_LASTNMAE, TABLE_MODULE, TABLE_DOCENT, MODULE_DOCENT_ID, DOCENT_DOCENT_ID);
+        String sql = String.format("SELECT m.%s, m.%s, d.%s FROM %s m INNER JOIN %s d on m.%s = d.%s ", MODULE_MODULE_ID, MODULE_NAME, DOCENT_LASTNMAE, TABLE_MODULE, TABLE_DOCENT, MODULE_DOCENT_ID, DOCENT_DOCENT_ID);
         return db.rawQuery(sql, new String[]{});
         //return db.query(TABLE_MODULE, new String[]{MODULE_MODULE_ID, MODULE_NAME, MODULE_DOCENT_ID}, null, null, null, null, null);
     }
@@ -330,19 +331,19 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
 
     @Override
     public Cursor getQuotationsCursor() {
-        String sql = String.format("SELECT q.%s, q.%s, q.%s, m.%s FROM %s q INNER JOIN %s m on q.%s = m.%s", QUOTATION_QUOTATION_ID, QUOTATION_TEXT, QUOTATION_DATE, MODULE_NAME, TABLE_QUOTATION, TABLE_MODULE, QUOTATION_MODULE_ID, MODULE_MODULE_ID);
-        return db.rawQuery(sql, new String[]{});
-        //return db.query(TABLE_QUOTATION, new String[]{QUOTATION_QUOTATION_ID, QUOTATION_TEXT, QUOTATION_DATE, QUOTATION_MODULE_ID}, null, null, null, null, null);
-    }
+        String sql = String.format("SELECT q.%s, q.%s, q.%s, m.%s FROM %s q INNER JOIN %s m on q.%s = m.%s ORDER BY q.%s DESC", QUOTATION_QUOTATION_ID, QUOTATION_TEXT, QUOTATION_DATE, MODULE_NAME, TABLE_QUOTATION, TABLE_MODULE, QUOTATION_MODULE_ID, MODULE_MODULE_ID, QUOTATION_DATE);
+            return db.rawQuery(sql, new String[]{});
+            //return db.query(TABLE_QUOTATION, new String[]{QUOTATION_QUOTATION_ID, QUOTATION_TEXT, QUOTATION_DATE, QUOTATION_MODULE_ID}, null, null, null, null, null);
+        }
 
-    @Override
-    public Quotation getQuotation(int id) {
-        Quotation quotation = null;
-        Cursor cursor = db.query(TABLE_QUOTATION, new String[]{QUOTATION_QUOTATION_ID, QUOTATION_TEXT, QUOTATION_DATE, QUOTATION_MODULE_ID}, QUOTATION_QUOTATION_ID + " =  ?", new String[]{Integer.toString(id)}, null, null, null);
+        @Override
+        public Quotation getQuotation(int id) {
+            Quotation quotation = null;
+            Cursor cursor = db.query(TABLE_QUOTATION, new String[]{QUOTATION_QUOTATION_ID, QUOTATION_TEXT, QUOTATION_DATE, QUOTATION_MODULE_ID}, QUOTATION_QUOTATION_ID + " =  ?", new String[]{Integer.toString(id)}, null, null, null);
 
-        if (cursor.moveToFirst()) {
-            id = cursor.getInt(0);
-            String text = cursor.getString(1);
+            if (cursor.moveToFirst()) {
+                id = cursor.getInt(0);
+                String text = cursor.getString(1);
             Calendar calendar = Util.parse(cursor.getString(2));
             Module module = getModule(cursor.getInt(3));
             quotation = new Quotation(id, module, calendar, text);
@@ -407,7 +408,7 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
 
     @Override
     public Cursor getQuotationsCursorByModule(int id) {
-        String sql = String.format("SELECT q.%s, q.%s, q.%s, m.%s FROM %s q INNER JOIN %s m on q.%s = m.%s WHERE q.%s = ?", QUOTATION_QUOTATION_ID, QUOTATION_TEXT, QUOTATION_DATE, MODULE_NAME, TABLE_QUOTATION, TABLE_MODULE, QUOTATION_MODULE_ID, MODULE_MODULE_ID, QUOTATION_MODULE_ID);
+        String sql = String.format("SELECT q.%s, q.%s, q.%s, m.%s FROM %s q INNER JOIN %s m on q.%s = m.%s WHERE q.%s = ? ORDER BY q.%s DESC", QUOTATION_QUOTATION_ID, QUOTATION_TEXT, QUOTATION_DATE, MODULE_NAME, TABLE_QUOTATION, TABLE_MODULE, QUOTATION_MODULE_ID, MODULE_MODULE_ID, QUOTATION_MODULE_ID,  QUOTATION_DATE);
         return db.rawQuery(sql, new String[]{Integer.toString(id)});
         // return db.query(TABLE_QUOTATION, new String[]{QUOTATION_QUOTATION_ID, QUOTATION_TEXT, QUOTATION_DATE, QUOTATION_MODULE_ID}, QUOTATION_MODULE_ID + " = ? ", new String[]{Integer.toString(id)}, null, null, null);
     }
@@ -433,7 +434,7 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
    */
     @Override
     public Cursor getQuotationsCursorByDocent(int id) {
-        String sql = "SELECT q._id, q.text, q.date, module.name, q.module_id FROM quotation as q INNER JOIN module ON q.module_id = module._id WHERE module.docent_id = ?";
+        String sql = "SELECT q._id, q.text, q.date, module.name, q.module_id FROM quotation as q INNER JOIN module ON q.module_id = module._id WHERE module.docent_id = ? ORDER BY q.date DESC";
         return db.rawQuery(sql, new String[]{Integer.toString(id)});
     }
 
