@@ -22,11 +22,14 @@ import de.die.dudes.quoteinator.dataadapter.RecyclerViewCursorAdapter;
 import de.die.dudes.quoteinator.database.SqlDatabase;
 import de.die.dudes.quoteinator.dataadapter.ModuleAdapter;
 import de.die.dudes.quoteinator.dialog.DeleteDialog;
+import de.die.dudes.quoteinator.dialog.OptionDialog;
+import de.die.dudes.quoteinator.editactvities.EditDocentActivity;
+import de.die.dudes.quoteinator.editactvities.EditModuleActivity;
 
 /**
  * Created by Phil on 05.08.2016.
  */
-public class ModuleFragment extends Fragment implements DeleteDialog.DeleteDialogListener {
+public class ModuleFragment extends Fragment implements DeleteDialog.DeleteDialogListener, OptionDialog.OptionDialogListener {
 
     public static final String ID_KEY = "ID_KEY";
     private SqlDatabase db;
@@ -59,12 +62,12 @@ public class ModuleFragment extends Fragment implements DeleteDialog.DeleteDialo
         adapter.setLongClickListener(new RecyclerViewCursorAdapter.LongClickListener() {
             @Override
             public void onClick(int id) {
-                DeleteDialog deleteDialog = new DeleteDialog();
+                OptionDialog optionDialog = new OptionDialog();
                 Bundle bundle = new Bundle();
                 bundle.putInt(ID_KEY, id);
-                deleteDialog.setArguments(bundle);
-                deleteDialog.setTargetFragment(ModuleFragment.this, 0);
-                deleteDialog.show(getFragmentManager(), "delete");
+                optionDialog.setArguments(bundle);
+                optionDialog.setTargetFragment(ModuleFragment.this, 0);
+                optionDialog.show(getFragmentManager(), "option");
             }
         });
 
@@ -115,5 +118,20 @@ public class ModuleFragment extends Fragment implements DeleteDialog.DeleteDialo
     @Override
     public void onNegativeClick() {
 
+    }
+
+    @Override
+    public void onDeleteClick(Bundle bundle) {
+        DeleteDialog deleteDialog = new DeleteDialog();
+        deleteDialog.setArguments(bundle);
+        deleteDialog.setTargetFragment(ModuleFragment.this, 0);
+        deleteDialog.show(getFragmentManager(), "delete");
+    }
+
+    @Override
+    public void onEditClick(Bundle bundle) {
+        Intent intent = new Intent(getContext(), EditModuleActivity.class);
+        intent.putExtra(ID_KEY, bundle.getInt(ID_KEY));
+        startActivity(intent);
     }
 }

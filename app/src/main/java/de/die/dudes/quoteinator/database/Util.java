@@ -1,5 +1,9 @@
 package de.die.dudes.quoteinator.database;
 
+import android.database.Cursor;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -17,7 +21,7 @@ public class Util {
         return dateFormatted;
     }
 
-    public static Calendar parse(String parse)  {
+    public static Calendar parse(String parse) {
         SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy:HH:mm:ss");
         Date date;
         try {
@@ -30,5 +34,20 @@ public class Util {
         calendar.setTime(date);
 
         return calendar;
+    }
+
+
+    public static int getPositionByName(Spinner mSpinner, int id) {
+        SpinnerAdapter adapter = mSpinner.getAdapter();
+        Cursor cursor = null;
+        long adapterId = -1;
+        for (int i = 0; i < adapter.getCount(); i++) {
+            adapterId = adapter.getItemId(i);
+            if (adapterId == id) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 }

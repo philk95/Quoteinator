@@ -1,5 +1,8 @@
 package de.die.dudes.quoteinator.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.io.Serializable;
 import java.util.Calendar;
 
@@ -107,4 +110,5 @@ public class Quotation implements Serializable {
     public int getID() {
         return this.id;
     }
+
 }

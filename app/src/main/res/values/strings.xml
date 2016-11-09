@@ -38,4 +38,8 @@
     <string name="cannotDeleteDocent">Dozent kann nicht gelöscht werden! Dozent ist noch mit min. einem Moduel verknüpft!</string>
     <string name="cannotDeleteModule">Modul kann nicht gelöscht werden! Modul ist noch mit min. einem Zitat verknüpft!</string>
     <string name="cannotDeleteQuotation">Zitat kann aus irgendeinem Grund nicht gelöscht werden. Shit happens! Leb damit!</string>
+    <string name="optionDialogTitle">Optionen</string>
+    <string name="editDocentSubtitle">Dozent bearbeiten</string>
+    <string name="editModuleSubtitle">Module bearbeiten</string>
+    <string name="editQuotationSubtitle">Zitat bearbeiten</string>
 </resources>

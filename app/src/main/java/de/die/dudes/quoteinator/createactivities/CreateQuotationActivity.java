@@ -45,6 +45,7 @@ public class CreateQuotationActivity extends AppCompatActivity {
     }
 
     public void onAddModule(View view) {
+        //TODO startActivityForResult(); Directly selected in the spinner
         Intent intent = new Intent(this, CreateModuleActivity.class);
         startActivity(intent);
     }

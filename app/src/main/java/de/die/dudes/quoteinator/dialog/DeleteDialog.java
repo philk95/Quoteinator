@@ -1,6 +1,5 @@
 package de.die.dudes.quoteinator.dialog;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -38,6 +37,7 @@ public class DeleteDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setIcon(android.R.drawable.ic_dialog_alert);
         builder.setTitle(R.string.deleteDialogTitle);
         builder.setMessage(R.string.deleteDialogMessage);
         builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {

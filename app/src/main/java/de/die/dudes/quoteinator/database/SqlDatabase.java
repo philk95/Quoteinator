@@ -158,7 +158,7 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
 
     @Override
     public Cursor getDocentsCursor() {
-        return db.query(TABLE_DOCENT, new String[]{DOCENT_DOCENT_ID, DOCENT_LASTNMAE}, null, null, null, null, null);
+        return db.query(TABLE_DOCENT, new String[]{DOCENT_DOCENT_ID, DOCENT_LASTNMAE}, null, null, null, null, DOCENT_LASTNMAE + " asc");
     }
 
     @Override
@@ -175,7 +175,7 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
         return docent;
     }
 
-    private Docent getDocent(String name) {
+    public Docent getDocent(String name) {
         Docent docent = null;
         Cursor cursor = db.query(TABLE_DOCENT, new String[]{DOCENT_DOCENT_ID, DOCENT_LASTNMAE}, DOCENT_LASTNMAE + " =  ?", new String[]{name}, null, null, null);
 
@@ -238,7 +238,7 @@ public class SqlDatabase extends SQLiteOpenHelper implements IDatabase {
   */
     @Override
     public Cursor getModulesCursor() {
-        String sql = String.format("SELECT m.%s, m.%s, d.%s FROM %s m INNER JOIN %s d on m.%s = d.%s", MODULE_MODULE_ID, MODULE_NAME, DOCENT_LASTNMAE, TABLE_MODULE, TABLE_DOCENT, MODULE_DOCENT_ID, DOCENT_DOCENT_ID);
+        String sql = String.format("SELECT m.%s, m.%s, d.%s FROM %s m INNER JOIN %s d on m.%s = d.%s ORDER BY %s asc", MODULE_MODULE_ID, MODULE_NAME, DOCENT_LASTNMAE, TABLE_MODULE, TABLE_DOCENT, MODULE_DOCENT_ID, DOCENT_DOCENT_ID, MODULE_NAME);
         return db.rawQuery(sql, new String[]{});
         //return db.query(TABLE_MODULE, new String[]{MODULE_MODULE_ID, MODULE_NAME, MODULE_DOCENT_ID}, null, null, null, null, null);
     }

@@ -1,11 +1,10 @@
-package de.die.dudes.quoteinator.createactivities;
+package de.die.dudes.quoteinator.editactvities;
 
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
@@ -13,19 +12,31 @@ import android.widget.SpinnerAdapter;
 
 import de.die.dudes.quoteinator.R;
 import de.die.dudes.quoteinator.database.SqlDatabase;
-import de.die.dudes.quoteinator.model.Docent;
+import de.die.dudes.quoteinator.database.Util;
+import de.die.dudes.quoteinator.fragments.ModuleFragment;
 import de.die.dudes.quoteinator.model.Module;
 
-public class CreateModuleActivity extends AppCompatActivity {
+public class EditModuleActivity extends AppCompatActivity {
+
+    private EditText mModuleEditText;
+    private Spinner mSpinner;
+    private Module mModule;
+    private int mId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_module);
+        getSupportActionBar().setSubtitle(R.string.editModuleSubtitle);
+
+        bindUIElements();
 
         updateDocentSpinner();
+    }
 
-        getSupportActionBar().setSubtitle(R.string.createModule);
+    private void bindUIElements() {
+        mModuleEditText = (EditText) findViewById(R.id.editModule);
+        mSpinner = (Spinner) findViewById(R.id.docentSpinner);
     }
 
     private void updateDocentSpinner() {
@@ -42,13 +53,14 @@ public class CreateModuleActivity extends AppCompatActivity {
     }
 
     public void onSave(View view) {
-        EditText module = (EditText) findViewById(R.id.editModule);
-        String moduleName = module.getText().toString();
-        Spinner spinner = (Spinner) findViewById(R.id.docentSpinner);
+        String moduleName = mModuleEditText.getText().toString();
+        Cursor cursor = (Cursor) mSpinner.getSelectedItem();
+        String docentName = cursor.getString(cursor.getColumnIndex(SqlDatabase.DOCENT_LASTNMAE));
 
+        mModule.setName(moduleName);
         SqlDatabase db = new SqlDatabase(this);
-        String docentName = ((Cursor) spinner.getSelectedItem()).getString(1);
-        db.addModule(new Module(moduleName, new Docent(docentName)));
+        mModule.setDocent(db.getDocent(docentName));
+        db.updateModule(mId, mModule);
         db.close();
         finish();
     }
@@ -59,13 +71,25 @@ public class CreateModuleActivity extends AppCompatActivity {
 
     public void onAddDocent(View view) {
         //TODO startActivityForResult(); Directly selected in the spinner
-        Intent intent = new Intent(this, CreateDocentActivity.class);
+        Intent intent = new Intent(this, EditDocentActivity.class);
         startActivity(intent);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        updateDocentSpinner();
+        fillUIElements();
+    }
+
+    private void fillUIElements() {
+        Intent intent = getIntent();
+        mId = intent.getIntExtra(ModuleFragment.ID_KEY, -1);
+
+        SqlDatabase db = new SqlDatabase(this);
+        mModule = db.getModule(mId);
+        db.close();
+
+        mModuleEditText.setText(mModule.getName());
+        mSpinner.setSelection(Util.getPositionByName(mSpinner, mModule.getDocent().getId()));
     }
 }

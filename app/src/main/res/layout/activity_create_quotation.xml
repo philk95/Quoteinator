@@ -34,12 +34,7 @@
             android:onClick="onAddModule"
             android:text="@string/addModule" />
 
-        <View
-            android:layout_marginTop="@dimen/paddingSeparator"
-            android:layout_marginBottom="@dimen/paddingSeparator"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray" />
+        <View style="@style/Divider"/>
 
         <TextView
             android:layout_width="wrap_content"

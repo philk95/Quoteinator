@@ -1,9 +1,11 @@
 package de.die.dudes.quoteinator.model;
 
+import java.io.Serializable;
+
 /**
  * Created by Phil on 17.04.2016.
  */
-public class Module {
+public class Module implements Serializable{
 
     private int moduleID;
     private String name;
@@ -47,11 +49,11 @@ public class Module {
         return this.name;
     }
 
-    private void setName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    private void setDocent(Docent id) {
+    public void setDocent(Docent id) {
         this.docent = id;
     }
 

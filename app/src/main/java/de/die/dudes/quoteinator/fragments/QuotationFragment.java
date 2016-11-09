@@ -21,11 +21,14 @@ import de.die.dudes.quoteinator.database.SqlDatabase;
 import de.die.dudes.quoteinator.dataadapter.QuotationAdapter;
 import de.die.dudes.quoteinator.dataadapter.RecyclerViewCursorAdapter;
 import de.die.dudes.quoteinator.dialog.DeleteDialog;
+import de.die.dudes.quoteinator.dialog.OptionDialog;
+import de.die.dudes.quoteinator.editactvities.EditDocentActivity;
+import de.die.dudes.quoteinator.editactvities.EditQuotationActivity;
 
 /**
  * Created by Phil on 05.08.2016.
  */
-public class QuotationFragment extends Fragment implements DeleteDialog.DeleteDialogListener {
+public class QuotationFragment extends Fragment implements DeleteDialog.DeleteDialogListener, OptionDialog.OptionDialogListener {
 
     public static final String ID_KEY = "ID_KEY";
     public final static String DOCENT = "DOCENT";
@@ -54,12 +57,12 @@ public class QuotationFragment extends Fragment implements DeleteDialog.DeleteDi
         adapter.setLongClickListener(new RecyclerViewCursorAdapter.LongClickListener() {
             @Override
             public void onClick(int id) {
-                DeleteDialog deleteDialog = new DeleteDialog();
+                OptionDialog optionDialog = new OptionDialog();
                 Bundle bundle = new Bundle();
                 bundle.putInt(ID_KEY, id);
-                deleteDialog.setArguments(bundle);
-                deleteDialog.setTargetFragment(QuotationFragment.this, 0);
-                deleteDialog.show(getFragmentManager(), "delete");
+                optionDialog.setArguments(bundle);
+                optionDialog.setTargetFragment(QuotationFragment.this, 0);
+                optionDialog.show(getFragmentManager(), "option");
             }
         });
 
@@ -101,7 +104,7 @@ public class QuotationFragment extends Fragment implements DeleteDialog.DeleteDi
     @Override
     public void onResume() {
         super.onResume();
-        //TODO test of getcursor. whats with the bundle
+        //TODO test of getcursor. whats with the bundle. When roatet etc...
         db = new SqlDatabase(getActivity());
         adapter.changeCursor(getCursor());
     }
@@ -126,5 +129,20 @@ public class QuotationFragment extends Fragment implements DeleteDialog.DeleteDi
     @Override
     public void onNegativeClick() {
 
+    }
+
+    @Override
+    public void onDeleteClick(Bundle bundle) {
+        DeleteDialog deleteDialog = new DeleteDialog();
+        deleteDialog.setArguments(bundle);
+        deleteDialog.setTargetFragment(QuotationFragment.this, 0);
+        deleteDialog.show(getFragmentManager(), "delete");
+    }
+
+    @Override
+    public void onEditClick(Bundle bundle) {
+        Intent intent = new Intent(getContext(), EditQuotationActivity.class);
+        intent.putExtra(ID_KEY, bundle.getInt(ID_KEY));
+        startActivity(intent);
     }
 }

@@ -29,7 +29,10 @@
         </activity>
         <activity android:name=".createactivities.CreateDocentActivity" />
         <activity android:name=".createactivities.CreateModuleActivity" />
-        <activity android:name=".createactivities.CreateQuotationActivity"></activity>
+        <activity android:name=".createactivities.CreateQuotationActivity"/>
+        <activity android:name=".editactvities.EditDocentActivity" />
+        <activity android:name=".editactvities.EditModuleActivity" />
+        <activity android:name=".editactvities.EditQuotationActivity"/>
     </application>
 
 </manifest>
